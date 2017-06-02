@@ -4,6 +4,7 @@ require "y2partitioner/device_graphs"
 require "y2storage"
 
 Yast.import "CWM"
+Yast.import "Popup"
 Yast.import "Stage"
 Yast.import "Wizard"
 
@@ -23,6 +24,7 @@ module Y2Partitioner
     class Main
       extend Yast::I18n
       extend Yast::UIShortcuts
+      extend Yast::Logger
 
       # Run the client
       def self.run
@@ -41,7 +43,13 @@ module Y2Partitioner
         )
 
         Yast::Wizard.CreateDialog unless Yast::Stage.initial
-        Yast::CWM.show(contents, caption: _("Partitioner"))
+        res = Yast::CWM.show(contents, caption: _("Partitioner"))
+
+        # Running system: presenting "Expert Partitioner: Summary" step now
+        # ep-main.rb SummaryDialog
+        if res == :next && Yast::Popup.ContinueCancel("(potentially) d3stR0y Ur DATA?!??")
+          storage.commit
+        end
         Yast::Wizard.CloseDialog unless Yast::Stage.initial
       end
     end
