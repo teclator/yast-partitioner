@@ -31,7 +31,7 @@ module Y2Partitioner
       # ideally single letter.
       FORMAT_FLAG = N_("F")
 
-    protected
+    private
 
       def encryption_value_for(device)
         return "" unless device.respond_to?(:encrypted?)
