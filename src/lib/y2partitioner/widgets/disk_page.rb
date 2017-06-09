@@ -150,7 +150,7 @@ module Y2Partitioner
           @partitions_table,
           HBox(
             AddButton.new(@disk_name),
-            EditButton.new(disk, @partitions_table),
+            EditButton.new(@disk_name, @partitions_table),
             DeleteDiskPartitionButton.new(device_graph: $dgm.dg,
                                           table:        @partitions_table)
           )
