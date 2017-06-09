@@ -1,12 +1,16 @@
 require "cwm/widget"
 require "cwm/tree_pager"
 
+<<<<<<< HEAD
 require "y2partitioner/widgets/disk_table"
+=======
+require "y2partitioner/device_graphs"
+require "y2partitioner/icons"
+>>>>>>> Used DeviceGraphs.instance instead of $dgm
 require "y2partitioner/sequences/add_partition"
 require "y2partitioner/widgets/delete_disk_partition_button"
 require "y2partitioner/widgets/disk_bar_graph"
 require "y2partitioner/widgets/disk_description"
-require "y2partitioner/icons"
 
 module Y2Partitioner
   module Widgets
@@ -20,7 +24,8 @@ module Y2Partitioner
       end
 
       def disk
-        Y2Storage::Disk.find_by_name($dgm.dg, @disk_name)
+        dg = DeviceGraphs.instance.current
+        Y2Storage::Disk.find_by_name(dg, @disk_name)
       end
 
       # @macro seeAbstractWidget
@@ -109,7 +114,7 @@ module Y2Partitioner
 
           name = @table.value[/table:partition:(.*)/, 1]
           sym = nil
-          $dgm.transaction do
+          DeviceGraphs.instance.transaction do
             partition = @disk.partitions.detect { |p| p.name == name }
 
             sym = Dialogs::FormatAndMount.new(partition).run
@@ -130,7 +135,8 @@ module Y2Partitioner
       end
 
       def disk
-        Y2Storage::Disk.find_by_name($dgm.dg, @disk_name)
+        dg = DeviceGraphs.instance.current
+        Y2Storage::Disk.find_by_name(dg, @disk_name)
       end
 
       def initial
@@ -150,9 +156,11 @@ module Y2Partitioner
           @partitions_table,
           HBox(
             AddButton.new(@disk_name),
-            EditButton.new(@disk_name, @partitions_table),
-            DeleteDiskPartitionButton.new(device_graph: $dgm.dg,
-                                          table:        @partitions_table)
+            EditButton.new(disk, @partitions_table),
+            DeleteDiskPartitionButton.new(
+              device_graph: DeviceGraphs.instance.current,
+              table:        @partitions_table
+            )
           )
         )
       end
