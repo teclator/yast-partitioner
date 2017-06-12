@@ -1,13 +1,9 @@
 require "cwm/widget"
 require "cwm/tree_pager"
 
-<<<<<<< HEAD
 require "y2partitioner/widgets/disk_table"
-=======
-require "y2partitioner/device_graphs"
-require "y2partitioner/icons"
->>>>>>> Used DeviceGraphs.instance instead of $dgm
 require "y2partitioner/sequences/add_partition"
+require "y2partitioner/sequences/edit_blk_device"
 require "y2partitioner/widgets/delete_disk_partition_button"
 require "y2partitioner/widgets/disk_bar_graph"
 require "y2partitioner/widgets/disk_description"
@@ -113,14 +109,9 @@ module Y2Partitioner
           end
 
           name = @table.value[/table:partition:(.*)/, 1]
-          sym = nil
-          DeviceGraphs.instance.transaction do
-            partition = @disk.partitions.detect { |p| p.name == name }
+          partition = @disk.partitions.detect { |p| p.name == name }
 
-            sym = Dialogs::FormatAndMount.new(partition).run
-            # this assumes there is no Password step
-            sym == :finish
-          end
+          Sequences::EditBlkDevice.new(partition).run
 
           # sym == :finish ? :redraw : nil
           # must redraw because we've replaced the original dialog contents!
